@@ -626,3 +626,12 @@ model-viewer {
     position: relative;
     
   }
+
+  .loading-text {
+    font-size: 30px;
+    text-align: center;
+    margin-top: -35px;
+    margin-bottom: 50px;
+    color: #ffffff;
+    z-index: 20;
+  }
