@@ -9,6 +9,18 @@ fetch("dataset/gpuData.json")
     gpuData = data;
   });
 
+async function bootServer() {
+    let prompt = "this is a message just to ensure the backend server is booted! Please answer with 'yes' if you recieve this";
+
+    const response = await fetch("https://secure-api-proxy.onrender.com/api/gemini", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+    });
+
+    console.log(response);
+}
+
 async function askGemini() {
     document.getElementById("confirmButton").style.display = 'none';
     document.getElementById("loadingText").style.display = 'block';
