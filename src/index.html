@@ -6,8 +6,9 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
-        <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+        <link rel="icon" type="image/x-icon" href="/favicon.ico">
     </head>
+
     <body class="cal-sans-regular">
         <nav class="navbar">
             <ul>
@@ -20,15 +21,13 @@
         <div id="container">
             
             <div id="page1" class="page visible">
-            
-
                 <div class="glassPanel">
                     <h1 class="website-name">GPYOU</h1>
                     <p class="website-sub">Choose the perfect GPU just for you!</p>
                 </div>
 
                 <video class="gpuAnim" loop autoplay muted>
-                    <source src="../models/gpu.mp4" type="video/mp4">
+                    <source src="models/gpu.mp4" type="video/mp4">
                 </video>
 
                 <button class="scrollButton" onClick="document.getElementById('firstQuestion').scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });">GET STARTED</button>
@@ -67,6 +66,10 @@
 
             <div id="page2" class="page hidden">
 
+                <video class="lavaBubbles" loop autoplay muted>
+                    <source src="images/bubbles.mp4" type="video/mp4">
+                </video>
+
                 <div id="model">
                     <model-viewer id="3dModel" alt="A 3D model of a robot" auto-rotate="" camera-controls="" background-color="#455A64"></model-viewer>
                 </div>
@@ -98,7 +101,7 @@
         </div>
 
         <div class="gradBackground"></div>
-
         <script src="app.js"></script>
+
     </body> 
 </html>

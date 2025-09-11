@@ -3,7 +3,7 @@ let gpuData = [];
 let selectedGPU = "";
 
 // Load GPU data from a json file
-fetch("../dataset/gpuData.json")
+fetch("dataset/gpuData.json")
   .then(res => res.json())
   .then(data => {
     gpuData = data;
@@ -83,7 +83,7 @@ async function askGemini() {
 
     document.getElementById("specs").innerText = specs;
 
-    document.getElementById("3dModel").src = `../models/${selectedGPU.Name}.glb`;
+    document.getElementById("3dModel").src = `models/${selectedGPU.Name}.glb`;
 
     // Hide Page 1 and show Page 2
     document.getElementById("page1").classList.remove("visible");
