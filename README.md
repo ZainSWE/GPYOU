@@ -8,7 +8,10 @@ The platform simplifies complex GPU specifications into an intuitive question ba
 ## Live Demo
 Access the full web app here  
 https://zainswe.github.io/GPYOU/src/
+
+<br>
 Or check out our Devpost below
+<br>
 https://devpost.com/software/gpyou
 
 ## Key Features
