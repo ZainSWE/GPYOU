@@ -10,15 +10,12 @@ fetch("dataset/gpuData.json")
   });
 
 async function bootServer() {
-    let prompt = "this is a message just to ensure the backend server is booted! Please answer with 'yes' if you recieve this";
-
-    const response = await fetch("https://secure-api-proxy.onrender.com/api/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt })
-    });
-
-    console.log(response);
+  try {
+    const response = await fetch("https://secure-api-proxy.onrender.com/warmup");
+    console.log("Server warmup status:", await response.json());
+  } catch (err) {
+    console.log("Warmup failed (server probably still waking)", err);
+  }
 }
 
 async function askGemini() {
