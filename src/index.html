@@ -1,107 +1,123 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>GPYOU</title>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    </head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GPYOU — Find the perfect GPU for your needs, budget, and use case with AI-powered recommendations.">
+    <title>GPYOU</title>
 
-    <body class="cal-sans-regular" onload="bootServer()">
-        <nav class="navbar">
-            <ul>
-                <li class="home"><a href="index.html">HOME</a></li>
-                <li><a href="model.html">MODELS</a></li>
-                <li><a href="about.html">ABOUT</a></li>
-            </ul>
-        </nav>
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
+
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://secure-api-proxy.onrender.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <link rel="preload" as="image" href="images/gpyou-animation/0001.png" fetchpriority="high">
+    <link rel="preload" as="image" href="images/gpyou-animation/0002.png">
+    <link rel="preload" as="image" href="images/gpyou-animation/0003.png">
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <!-- Loaded here so model-viewer is ready when SPA navigates to Models page -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
+
+<body class="cal-sans-regular" onload="bootServer()">
+
+    <!-- ── Persistent: stays across all page swaps ── -->
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-loader">
+        <div class="loader-bar">
+            <div class="loader-fill" id="loader-fill"></div>
+        </div>
+        <p class="loader-label" id="loader-label">Loading · 0%</p>
+    </div>
+
+    <nav class="navbar">
+        <ul>
+            <li class="home"><a href="index.html" class="active">HOME</a></li>
+            <li><a href="model.html">MODELS</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+        </ul>
+    </nav>
+
+    <!-- ── Router swaps only what's inside here ── -->
+    <div id="page-content">
 
         <div id="container">
-            
+
+            <!-- PAGE 1 — Hero + Questions -->
             <div id="page1" class="page visible">
-                <div class="glassPanel">
-                    <h1 class="website-name">GPYOU</h1>
-                    <p class="website-sub">Choose the perfect GPU just for you!</p>
+
+                <div class="hero-section">
+                    <div class="hero-left">
+                        <p class="hero-eyebrow">GPU Recommendation Engine</p>
+                        <h1 class="website-name">GPYOU</h1>
+                        <p class="website-sub">Choose the perfect GPU just for you.</p>
+                        <button class="scrollButton" onclick="document.getElementById('firstQuestion').scrollIntoView({ behavior: 'smooth', block: 'start' });">
+                            GET STARTED
+                        </button>
+                    </div>
                 </div>
 
-                <video class="gpuAnim" loop autoplay muted>
-                    <source src="models/gpu.mp4" type="video/mp4">
-                </video>
+                <div class="questions-section" id="firstQuestion"></div>
 
-                <button class="scrollButton" onClick="document.getElementById('firstQuestion').scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });">GET STARTED</button>
-
-                <div class="glassPanel2"></div>
-                
-                <div class="question-text" id="firstQuestion"> What would you like to use your gpu for?</div>
-                    <div class="prompt-box">
-                    <input class="user-input" id="usageInput" type="text" placeholder="I would like to use the pc for gaming..." />
-                </div>
-
-                <div class="question-text"> What programs do you want to run?</div>
-                    <div class="prompt-box">
-                    <input class="user-input" id="programsInput" type="text" placeholder="I am expecting it to be high performance..." />
-                </div>
-
-                <div class="question-text"> Do you have a preference for a GPU Manufacturer? </div>
-                    <div class="prompt-box">
-                    <input class="user-input" id="companyInput" type="text" placeholder="I would prefer Nvidia..." />
-                </div>
-
-
-                <div class="question-text"> Your Budget / Price Range </div>
-                    <div class="prompt-box">
-                    <input class="user-input" id="budgetInput" type="text" placeholder="My budget is 500-700$..." />
-                </div>
-
-                <div class="confirm-wrapper">
-                    <button id="confirmButton" class="confirm-button" onclick="askGemini()">CONFIRM</button>
-                    <div id="loadingText" class="loading-text" style="display: none">Loading...</div>
-                </div>
-
-                
             </div>
-                
 
+            <!-- PAGE 2 — Results -->
             <div id="page2" class="page hidden">
 
-                <video class="lavaBubbles" loop autoplay muted>
-                    <source src="images/bubbles.mp4" type="video/mp4">
-                </video>
-
                 <div id="model">
-                    <model-viewer id="3dModel" alt="A 3D model of a robot" auto-rotate="" camera-controls="" background-color="#455A64"></model-viewer>
+                    <model-viewer
+                        id="3dModel"
+                        alt="A 3D model of a GPU"
+                        auto-rotate
+                        camera-controls
+                        background-color="#455A64"
+                    ></model-viewer>
                 </div>
 
                 <div class="glassPanel3"></div>
+
                 <div class="info-wrap">
-                <div class="finalRec" id="finalRec"></div>
-
-                <div class="specs-row">
-                    <div class="spec-card">
-                        <div class="spec-info" id="specs"></div>
+                    <div class="finalRec" id="finalRec"></div>
+                    <div class="specs-row">
+                        <div class="spec-card">
+                            <div class="spec-info" id="specs"></div>
+                        </div>
                     </div>
-                  </div>
-                <div class="finalRec" id="finalRec"></div>
-
                 </div>
 
-                <!-- Loads model-viewer for modern browsers -->
-                <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.js"></script>
-                <!-- Loads model-viewer for older browsers -->
-                <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
-            
                 <footer>
                     <div class="footer-content">
-                    <p>© GPYOU 2025. Choose the Perfect GPU just for you.</p>
+                        <p>© GPYOU 2025. Choose the Perfect GPU just for you.</p>
                     </div>
                 </footer>
+
             </div>
+
         </div>
 
-        <div class="gradBackground"></div>
-        <script src="app.js"></script>
+    </div><!-- /#page-content -->
 
-    </body> 
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <!-- Lenis -->
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
+
+    <!-- App scripts -->
+    <script src="app.js" defer></script>
+    <script src="questionsFlow.js" defer></script>
+    <script src="bgCanvas.js" defer></script>
+    <script src="galleryScript.js" defer></script>
+    <script src="aboutScript.js" defer></script>
+    <script src="animations.js" defer></script>
+    <script src="router.js" defer></script>
+
+</body>
 </html>

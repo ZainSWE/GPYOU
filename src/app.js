@@ -1,114 +1,120 @@
+/* app.js — Gemini API integration + results page reveal
+   No server needed — calls Gemini directly from the browser.
+   Get your free API key at: https://aistudio.google.com/app/apikey
+*/
+
+const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+
 let gpuData = [];
+let selectedGPU = '';
 
-let selectedGPU = "";
+fetch('dataset/gpuData.json')
+    .then(res => res.json())
+    .then(data => { gpuData = data; });
 
-// Load GPU data from a json file
-fetch("dataset/gpuData.json")
-  .then(res => res.json())
-  .then(data => {
-    gpuData = data;
-  });
-
-async function bootServer() {
-  try {
-    const response = await fetch("https://secure-api-proxy.onrender.com/warmup");
-    console.log("Server warmup status:", await response.json());
-  } catch (err) {
-    console.log("Warmup failed (server probably still waking)", err);
-  }
-}
+/* kept so index.html onload= doesn't throw — server is gone */
+function bootServer() {}
 
 async function askGemini() {
-    document.getElementById("confirmButton").style.display = 'none';
-    document.getElementById("loadingText").style.display = 'block';
+    const usageInput    = document.getElementById('usageInput')?.value    || '';
+    const programsInput = document.getElementById('programsInput')?.value || '';
+    const companyInput  = document.getElementById('companyInput')?.value  || '';
+    const budgetInput   = document.getElementById('budgetInput')?.value   || '';
 
-    //Getting inputs from website
-    const usageInput = document.getElementById("usageInput").value;
-    const programsInput = document.getElementById("programsInput").value;
-    const companyInput = document.getElementById("companyInput").value;
-    const budgetInput = document.getElementById("budgetInput").value;
-
-    //Make context for gemini based on the dataset of gpus
-    let context = "Here is a list of GPU information:\n";
+    let context = 'Here is a list of GPU information:\n';
     gpuData.forEach(gpu => {
         context += `Name: ${gpu.Name}\nMemory: ${gpu.Memory}\nCompany: ${gpu.Company}\nPerformance: ${gpu.Performance}\nRelease Date: ${gpu.Date}\nPrice: ${gpu.Price}\n\n`;
     });
 
-    //Make the prompt
     let prompt = `${context}\nHere are the user's preferences:\n`;
+    prompt += usageInput.trim()    === '' ? 'Usage preference: I have no preference,\n'                           : `Usage preference: ${usageInput}\n`;
+    prompt += programsInput.trim() === '' ? 'Performance Expectations: I have no expectations,\n'                 : `Performance Expectations: ${programsInput}\n`;
+    prompt += companyInput.trim()  === '' ? 'Preferred company: I have no preference for manufacturer,\n'         : `Preferred company: ${companyInput}\n`;
+    prompt += budgetInput.trim()   === '' ? 'Budget: I have no budget restrictions,\n'                            : `Budget: ${budgetInput}\n`;
+    prompt += `--If a preference is unrelated to GPUs, ignore it and assume no preference for that section--
+    \nBased on these preferences and ONLY the list of GPUs given, which GPU would you recommend?
+    The best GPU that satisfies the preferences without exceeding the budget (if specified).
+    Mention the GPU name exactly as it appears in the dataset.
+    Give one single short sentence recommending 1 GPU and briefly explain why it suits the user in a conversational, non-robotic way.`;
 
-    //Checke each input box if its empty and add a message accordingly
-    if(usageInput.trim() === ""){
-        prompt += `Usage preference: I have no preference when it comes to the general usage of the gpu,\n`;
+    try {
+        const response = await fetch(GEMINI_URL, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+
+        const result = await response.json();
+        const answer = result.candidates[0].content.parts[0].text;
+
+        selectedGPU = getGPU(answer);
+
+        document.getElementById('finalRec').innerText = answer;
+        document.getElementById('specs').innerText =
+            `${selectedGPU.Name} Specifications\n` +
+            `─────────────────────────\n` +
+            `Company     ${selectedGPU.Company}\n` +
+            `VRAM        ${selectedGPU.Memory}\n` +
+            `Released    ${selectedGPU.Date}\n` +
+            `Avg. Price  $${selectedGPU.Price}\n\n` +
+            `${selectedGPU.Performance}`;
+
+        document.getElementById('3dModel').src = `models/${selectedGPU.Name}.glb`;
+
+        const page1 = document.getElementById('page1');
+        const page2 = document.getElementById('page2');
+
+        if (window.gsap) {
+            gsap.to(page1, {
+                opacity: 0, duration: 0.28, ease: 'power2.in',
+                onComplete: () => {
+                    page1.classList.add('hidden');
+                    page1.classList.remove('visible');
+                    page2.classList.add('visible');
+                    page2.classList.remove('hidden');
+
+                    const tl = gsap.timeline();
+                    tl.fromTo('#model',
+                        { opacity: 0, y: 20 },
+                        { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' }
+                    )
+                    .fromTo('.finalRec',
+                        { opacity: 0, x: -14 },
+                        { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' },
+                        '-=0.15'
+                    )
+                    .fromTo('.spec-card',
+                        { opacity: 0, x: 14 },
+                        { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' },
+                        '-=0.3'
+                    )
+                    .fromTo('footer',
+                        { opacity: 0 },
+                        { opacity: 1, duration: 0.3, ease: 'power2.out' },
+                        '-=0.15'
+                    );
+
+                    window.scrollTo(0, 0);
+                    if (window._lenis) window._lenis.scrollTo(0, { immediate: true });
+                }
+            });
+        } else {
+            page1.classList.add('hidden');
+            page1.classList.remove('visible');
+            page2.classList.add('visible');
+            page2.classList.remove('hidden');
+        }
+
+    } catch (err) {
+        console.error('Gemini request failed:', err);
+        if (typeof setLoadingState === 'function') setLoadingState(false);
     }
-    else{
-        prompt += `Usage preference: ${usageInput}\n`;
-    }
-
-    if(programsInput.trim() === ""){
-        prompt += `Performance Expectations: I have no expectances when it comes to performance,\n`;
-    }
-    else{
-        prompt += `Performance Expectations: ${programsInput}\n`;
-    }
-
-    if(companyInput.trim() === ""){
-        prompt += `Preferred company: I have no preference when it comes to the manufacturer/company of the gpu,\n`;
-    }
-    else{
-        prompt += `Preferred company: ${companyInput}\n`;
-    }
-
-    if(budgetInput.trim() === ""){
-        prompt += `Budget: I have no budget restrictions in mind,\n`;
-    }
-    else{
-        prompt += `Budget: ${budgetInput}\n`;
-    }
-
-    prompt += `--If one of these preferences is not connected to GPUs and the preference then ignore it completely and assume the user has no preferences for that section-- 
-    \nBased on these preferences and ONLY the list of GPUs given, which GPU would you recommend, 
-    the best GPU that satisfies the preferences without exceeding the budget (if specified), mention the name of the gpu exactly how it appears in the given dataset, 
-    give me one single small sentence that has only 1 gpu recommendation and explain why this option suits the user briefly in a conversational way, do not sound robotic`;
-
-    //Call gemini API and get a response
-    const response = await fetch("https://secure-api-proxy.onrender.com/api/gemini", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt })
-    });
-
-    //Parse the response into a valid output
-    const result = await response.json();
-    const answer = result.candidates[0].content.parts[0].text;
-
-    document.getElementById("finalRec").innerText = answer;
-
-    selectedGPU = getGPU(answer);
-    console.log(selectedGPU.Name);
-
-    //Make an output message for the specs of the gpu recommended
-    const specs = `${selectedGPU.Name} Specifications:\nRelease Date: ${selectedGPU.Date}\nCompany: ${selectedGPU.Company}\nMemory: ${selectedGPU.Memory}\nAverage Price: ${selectedGPU.Price}\nPerformance Overview: ${selectedGPU.Performance}`;
-
-    document.getElementById("specs").innerText = specs;
-
-    document.getElementById("3dModel").src = `models/${selectedGPU.Name}.glb`;
-
-    // Hide Page 1 and show Page 2
-    document.getElementById("page1").classList.remove("visible");
-    document.getElementById("page2").classList.add("visible");
-    document.getElementById("page1").classList.add("hidden");
-    document.getElementById("page2").classList.remove("hidden");
-    
 }
 
-function getGPU(answer){
-    //Go through the gpu list to check if its mentioned in the output
-    for(let gpu of gpuData){
-        if(answer.toLowerCase().includes(gpu.Name.toLowerCase())){
-            return gpu;
-        }
+function getGPU(answer) {
+    for (const gpu of gpuData) {
+        if (answer.toLowerCase().includes(gpu.Name.toLowerCase())) return gpu;
     }
-
-    return "Unknown GPU"; //Return unknown if the gpu wasnt found
+    return { Name: 'Unknown', Company: '—', Memory: '—', Date: '—', Price: '—', Performance: '—' };
 }

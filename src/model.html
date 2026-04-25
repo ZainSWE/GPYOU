@@ -1,39 +1,74 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>GPYOU</title>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
-        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    </head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GPYOU · Browse and explore all GPU models in 3D.">
+    <title>GPYOU · Models</title>
 
-    <video class="lavaBubbles" loop autoplay muted>
-        <source src="images/bubbles.mp4" type="video/mp4">
-    </video>
+    <link rel="stylesheet" href="styles.css">
 
-    <body class="cal-sans-regular">
-        <nav class="navbar">
-            <ul>
-                <li class="home"><a href="index.html">HOME</a></li>
-                <li><a href="model.html">MODELS</a></li>
-                <li><a href="about.html">ABOUT</a></li>
-            </ul>
-        </nav>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
 
-        <body class="gallery">
-            <h1 class="website-name">GPU MODELS</h1>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-            <div class="gallery" id="gallery"></div>
-            <script src="galleryScript.js"></script>
-        </body>
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+
+<body class="cal-sans-regular">
+
+    <!-- ── Persistent across all pages: canvas + loader ── -->
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-loader">
+        <div class="loader-bar">
+            <div class="loader-fill" id="loader-fill"></div>
+        </div>
+        <p class="loader-label" id="loader-label">Loading · 0%</p>
+    </div>
+
+    <nav class="navbar">
+        <ul>
+            <li class="home"><a href="index.html">HOME</a></li>
+            <li><a href="model.html" class="active">MODELS</a></li>
+            <li><a href="about.html">ABOUT</a></li>
+        </ul>
+    </nav>
+
+    <div id="page-content">
+
+        <header class="models-header">
+            <p class="models-eyebrow">GPU Library</p>
+            <h1 class="models-title">GPU Models</h1>
+            <p class="models-sub">Browse the full collection — hover any card to explore in 3D.</p>
+        </header>
+
+        <div class="gallery" id="gallery"></div>
 
         <footer>
             <div class="footer-content">
-            <p>© GPYOU 2025. Choose the Perfect GPU just for you.</p>
+                <p>© GPYOU 2025. Choose the Perfect GPU just for you.</p>
             </div>
         </footer>
-    </body>
+
+    </div><!-- /#page-content -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
+
+    <script src="app.js" defer></script>
+    <script src="questionsFlow.js" defer></script>
+    <script src="bgCanvas.js" defer></script>
+    <script src="galleryScript.js" defer></script>
+    <script src="aboutScript.js" defer></script>
+    <script src="animations.js" defer></script>
+    <script src="router.js" defer></script>
+
+</body>
 </html>

@@ -1,69 +1,136 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>GPYOU</title>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
-        <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    </head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GPYOU · Learn about our AI-powered GPU recommendation tool and what makes it different.">
+    <title>GPYOU · About</title>
 
-    <video class="lavaBubbles" loop autoplay muted>
-        <source src="images/bubbles.mp4" type="video/mp4">
-    </video>
+    <link rel="stylesheet" href="styles.css">
 
-    <body class="cal-sans-regular">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cal+Sans&display=swap" rel="stylesheet">
 
-        <nav class="navbar">
-            <ul>
-                <li class="home"><a href="index.html">HOME</a></li>
-                <li><a href="model.html">MODELS</a></li>
-                <li><a href="about.html">ABOUT</a></li>
-            </ul>
-        </nav>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-        <div id="content">
-            <h1 class="website-name">ABOUT US</h1>
-            
-            <div class="about-wrapper">
-            <div class="aboutPanel">
-                <p class="about-sub">GPYOU is a GPU recommendation tool designed to help users find the right graphics card based on their needs, preferences, and budget.
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <!-- Needed so model-viewer is ready when SPA navigates to Models page -->
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+</head>
 
-                    The graphics card market is constantly changing — dozens of models, confusing specifications, and 
-                    widely varying prices make it difficult to know what to choose. GPYOU simplifies that process by 
-                    asking you a few key questions, then offering personalized recommendations tailored to your situation.
-                    <br><br>
-                    Whether you’re building a new PC, upgrading an old system, or just trying to understand 
-                    which GPU offers the best value for your use case, GPYOU helps you make an informed decision without the need for deep technical knowledge.
-                    <br><br>
-                </p>
+<body class="cal-sans-regular">
+
+    <!-- ── Persistent across all pages: canvas + loader ── -->
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-loader">
+        <div class="loader-bar">
+            <div class="loader-fill" id="loader-fill"></div>
+        </div>
+        <p class="loader-label" id="loader-label">Loading · 0%</p>
+    </div>
+
+    <nav class="navbar">
+        <ul>
+            <li class="home"><a href="index.html">HOME</a></li>
+            <li><a href="model.html">MODELS</a></li>
+            <li><a href="about.html" class="active">ABOUT</a></li>
+        </ul>
+    </nav>
+
+    <div id="page-content">
+
+        <div class="about-page">
+
+            <div class="about-header">
+                <p class="about-eyebrow">Who We Are</p>
+                <h1 class="about-title">About GPYOU</h1>
             </div>
-            <div class="aboutPanel2">
-                <p class="about-sub2">
-                What GPYOU Offers:
-                <br><br>
-                A clean, user-friendly interface
-                <br><br>
-                Simple prompts to collect your use case (e.g. gaming, creative work, development)
-                <br><br>
-                Consideration for manufacturer preferences and price range
-                <br><br>
-                Straightforward recommendations that adapt to your input
-                <br><br>
-                GPYOU is built for anyone — from first-time builders to experienced users — who wants clarity in a crowded market.
-                    It’s not tied to specific brands or retailers, and it doesn’t rely on outdated benchmarks. The goal is simple: to 
-                give you relevant, useful suggestions based on how you actually use your computer.
-                <br><br>
-                If you're tired of endless spec sheets and contradictory advice, GPYOU is here to streamline the process.</p>
+
+            <div class="about-grid">
+
+                <div class="about-panel" id="panel-1">
+                    <p class="panel-label">The Problem</p>
+                    <h2 class="panel-heading">The GPU market is overwhelming.</h2>
+                    <p class="panel-text">
+                        GPYOU is a GPU recommendation tool designed to help users find the right graphics
+                        card based on their needs, preferences, and budget.
+                        <br><br>
+                        The graphics card market is constantly changing with dozens of models, confusing
+                        specifications, and widely varying prices make it difficult to know what to choose.
+                        GPYOU simplifies that process by asking you a few key questions, then offering
+                        personalized recommendations tailored to your situation.
+                        <br><br>
+                        Whether you're building a new PC, upgrading an old system, or trying to understand
+                        which GPU offers the best value. GPYOU helps you make an informed decision
+                        without needing deep technical knowledge.
+                    </p>
+                </div>
+
+                <div class="about-panel" id="panel-2">
+                    <p class="panel-label">What We Offer</p>
+                    <h2 class="panel-heading">Built for everyone.</h2>
+                    <ul class="feature-list">
+                        <li>Clean, distraction-free interface</li>
+                        <li>Simple prompts for gaming, creative work, and development</li>
+                        <li>Manufacturer and budget preferences</li>
+                        <li>AI-powered real-time matching</li>
+                        <li>3D model viewer for every GPU</li>
+                        <li>No brand bias, no outdated benchmarks</li>
+                    </ul>
+                </div>
+
+                <div class="about-panel" id="panel-3">
+                    <p class="panel-label">Our Mission</p>
+                    <h2 class="panel-heading">Clarity in a crowded market.</h2>
+                    <p class="panel-text">
+                        GPYOU is built for anyone, from first-time builders to experienced users 
+                        who wants a faster, cleaner path to the right GPU.
+                        <br><br>
+                        We combine a curated dataset with AI reasoning so every recommendation
+                        is grounded in real specs and real prices, not guesswork.
+                    </p>
+                </div>
+
             </div>
+
+            <div class="about-stats" id="about-stats">
+                <div class="stat-block">
+                    <span class="stat-block-num">40+</span>
+                    <span class="stat-block-label">GPUs in dataset</span>
+                </div>
+                <div class="stat-block">
+                    <span class="stat-block-num">AI</span>
+                    <span class="stat-block-label">Powered matching</span>
+                </div>
+                <div class="stat-block">
+                    <span class="stat-block-num">GDSC '25</span>
+                    <span class="stat-block-label">Best UI Award</span>
+                </div>
+            </div>
+
         </div>
 
         <footer>
             <div class="footer-content">
-            <p>© GPYOU 2025. Choose the Perfect GPU just for you.</p>
+                <p>© GPYOU 2025. Choose the Perfect GPU just for you.</p>
             </div>
         </footer>
 
-    </body>
+    </div><!-- /#page-content -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js" defer></script>
+
+    <script src="app.js" defer></script>
+    <script src="questionsFlow.js" defer></script>
+    <script src="bgCanvas.js" defer></script>
+    <script src="galleryScript.js" defer></script>
+    <script src="aboutScript.js" defer></script>
+    <script src="animations.js" defer></script>
+    <script src="router.js" defer></script>
+
+</body>
 </html>
